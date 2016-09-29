@@ -50,6 +50,7 @@ namespace Hucksters.Gripari.Output
         public void Flush()
         {
             var flushMsg = eventLogs.ToByteArray();
+            eventLogs = new EventLogs();
         }
 
         public void Send(byte[] data)

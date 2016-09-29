@@ -43,7 +43,6 @@ namespace Hucksters.Gripari.Input
                             elea.Timestamp = Utils.DateTimeToUnixTImestamp(eventLog.date);
                             elea.Msg = JsonConvert.SerializeObject(eventLog);
                             handler?.Invoke(this, elea);
-                            Thread.Sleep(1000);
                         }
                     }
                 }
@@ -186,7 +185,6 @@ namespace Hucksters.Gripari.Input
             dynamic eventLogsValueTable = Connection.NewObject("ValueTable");
             Connection.UnloadEventLog(eventLogsValueTable, filterEvents);
 
-            Console.WriteLine(eventLogsValueTable.Count());
             foreach (var eventLog in eventLogsValueTable)
             {
                 yield return OneCEventLogToEventLogStruct(eventLog);
@@ -215,7 +213,6 @@ namespace Hucksters.Gripari.Input
         {
             dynamic query = Connection.NewObject("Query");
             query.Text = String.Format("SELECT * FROM {0}", sourcePath);
-            Console.WriteLine(query.Text);
             dynamic rows = query.Execute().Unload();
 
             for (int i = 0; i < rows.Count(); i++)
