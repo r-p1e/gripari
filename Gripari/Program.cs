@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Hucksters.Forvaret.Input;
-using Hucksters.Forvaret.Output;
+using Hucksters.Gripari.Input;
+using Hucksters.Gripari.Output;
 
-namespace Hucksters.Forvaret
+namespace Hucksters.Gripari
 {
     class Program
     {

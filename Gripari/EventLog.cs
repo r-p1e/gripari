@@ -7,7 +7,7 @@ using pb = global::Google.Protobuf;
 using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
 using scg = global::System.Collections.Generic;
-namespace Hucksters.Forvaret.Output {
+namespace Hucksters.Gripari.Output {
 
   /// <summary>Holder for reflection information generated from EventLog.proto</summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -27,13 +27,13 @@ namespace Hucksters.Forvaret.Output {
             "ZXJpdHkYASABKA4yEi5mb3J2YXJldC5TZXZlcml0eRIRCgl0aW1lc3RhbXAY",
             "AiABKAESCwoDbXNnGAMgASgJEg4KBnNvdXJjZRgEIAEoCSIxCglFdmVudExv",
             "Z3MSJAoIZW50aXRpZXMYASADKAsyEi5mb3J2YXJldC5FdmVudExvZyoqCghT",
-            "ZXZlcml0eRIICgRJTkZPEAASCQoFRVJST1IQARIJCgVERUJVRxACQhyqAhlI",
-            "dWNrc3RlcnMuRm9ydmFyZXQuT3V0cHV0YgZwcm90bzM="));
+            "ZXZlcml0eRIICgRJTkZPEAASCQoFRVJST1IQARIJCgVERUJVRxACQhuqAhhI",
+            "dWNrc3RlcnMuR3JpcGFyaS5PdXRwdXRiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
-          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Hucksters.Forvaret.Output.Severity), }, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Hucksters.Forvaret.Output.EventLog), global::Hucksters.Forvaret.Output.EventLog.Parser, new[]{ "Severity", "Timestamp", "Msg", "Source" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Hucksters.Forvaret.Output.EventLogs), global::Hucksters.Forvaret.Output.EventLogs.Parser, new[]{ "Entities" }, null, null, null)
+          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Hucksters.Gripari.Output.Severity), }, new pbr::GeneratedClrTypeInfo[] {
+            new pbr::GeneratedClrTypeInfo(typeof(global::Hucksters.Gripari.Output.EventLog), global::Hucksters.Gripari.Output.EventLog.Parser, new[]{ "Severity", "Timestamp", "Msg", "Source" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Hucksters.Gripari.Output.EventLogs), global::Hucksters.Gripari.Output.EventLogs.Parser, new[]{ "Entities" }, null, null, null)
           }));
     }
     #endregion
@@ -55,7 +55,7 @@ namespace Hucksters.Forvaret.Output {
     public static pb::MessageParser<EventLog> Parser { get { return _parser; } }
 
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Hucksters.Forvaret.Output.EventLogReflection.Descriptor.MessageTypes[0]; }
+      get { return global::Hucksters.Gripari.Output.EventLogReflection.Descriptor.MessageTypes[0]; }
     }
 
     pbr::MessageDescriptor pb::IMessage.Descriptor {
@@ -81,8 +81,8 @@ namespace Hucksters.Forvaret.Output {
 
     /// <summary>Field number for the "severity" field.</summary>
     public const int SeverityFieldNumber = 1;
-    private global::Hucksters.Forvaret.Output.Severity severity_ = 0;
-    public global::Hucksters.Forvaret.Output.Severity Severity {
+    private global::Hucksters.Gripari.Output.Severity severity_ = 0;
+    public global::Hucksters.Gripari.Output.Severity Severity {
       get { return severity_; }
       set {
         severity_ = value;
@@ -212,7 +212,7 @@ namespace Hucksters.Forvaret.Output {
             input.SkipLastField();
             break;
           case 8: {
-            severity_ = (global::Hucksters.Forvaret.Output.Severity) input.ReadEnum();
+            severity_ = (global::Hucksters.Gripari.Output.Severity) input.ReadEnum();
             break;
           }
           case 17: {
@@ -239,7 +239,7 @@ namespace Hucksters.Forvaret.Output {
     public static pb::MessageParser<EventLogs> Parser { get { return _parser; } }
 
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Hucksters.Forvaret.Output.EventLogReflection.Descriptor.MessageTypes[1]; }
+      get { return global::Hucksters.Gripari.Output.EventLogReflection.Descriptor.MessageTypes[1]; }
     }
 
     pbr::MessageDescriptor pb::IMessage.Descriptor {
@@ -262,10 +262,10 @@ namespace Hucksters.Forvaret.Output {
 
     /// <summary>Field number for the "entities" field.</summary>
     public const int EntitiesFieldNumber = 1;
-    private static readonly pb::FieldCodec<global::Hucksters.Forvaret.Output.EventLog> _repeated_entities_codec
-        = pb::FieldCodec.ForMessage(10, global::Hucksters.Forvaret.Output.EventLog.Parser);
-    private readonly pbc::RepeatedField<global::Hucksters.Forvaret.Output.EventLog> entities_ = new pbc::RepeatedField<global::Hucksters.Forvaret.Output.EventLog>();
-    public pbc::RepeatedField<global::Hucksters.Forvaret.Output.EventLog> Entities {
+    private static readonly pb::FieldCodec<global::Hucksters.Gripari.Output.EventLog> _repeated_entities_codec
+        = pb::FieldCodec.ForMessage(10, global::Hucksters.Gripari.Output.EventLog.Parser);
+    private readonly pbc::RepeatedField<global::Hucksters.Gripari.Output.EventLog> entities_ = new pbc::RepeatedField<global::Hucksters.Gripari.Output.EventLog>();
+    public pbc::RepeatedField<global::Hucksters.Gripari.Output.EventLog> Entities {
       get { return entities_; }
     }
 

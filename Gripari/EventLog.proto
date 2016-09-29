@@ -1,7 +1,7 @@
 ﻿syntax = "proto3";
 package forvaret;
 
-option csharp_namespace = "Hucksters.Forvaret.Output";
+option csharp_namespace = "Hucksters.Gripari.Output";
 
 message EventLog {
 	Severity severity = 1;

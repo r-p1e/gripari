@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Hucksters.Forvaret.Input;
+using Hucksters.Gripari.Input;
 using Google.Protobuf;
 using System.Net;
 using System.IO;
 using System.Security.Cryptography;
 
-namespace Hucksters.Forvaret.Output
+namespace Hucksters.Gripari.Output
 {
     class WebOut
     {
