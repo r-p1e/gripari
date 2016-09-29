@@ -233,8 +233,8 @@ namespace Hucksters.Forvaret.Input
                     {
                         continue;
                     }
-
-                    if (valueType == "COMObject")
+                    Console.WriteLine(valueType);
+                    if (valueType == "System.__ComObject")
                     {
                         data.Add(name, Connection.String(value));
                     } else
