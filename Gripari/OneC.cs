@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 using System.Threading;
 using Microsoft.CSharp.RuntimeBinder;
 
-namespace Hucksters.Forvaret.Input
+namespace Hucksters.Gripari.Input
 {
     
     public class OneC
@@ -233,7 +233,7 @@ namespace Hucksters.Forvaret.Input
                     {
                         continue;
                     }
-                    Console.WriteLine(valueType);
+
                     if (valueType == "System.__ComObject")
                     {
                         data.Add(name, Connection.String(value));
