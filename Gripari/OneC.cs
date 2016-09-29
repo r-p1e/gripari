@@ -7,6 +7,7 @@ using IniParser.Model;
 using System.Reflection;
 using Newtonsoft.Json;
 using System.Threading;
+using Microsoft.CSharp.RuntimeBinder;
 
 namespace Hucksters.Forvaret.Input
 {
@@ -222,7 +223,16 @@ namespace Hucksters.Forvaret.Input
                 {
                     string name = rows.Columns.Get(j).Name;
                     dynamic value = rows.Get(i).Get(j);
-                    string valueType = value.GetType().ToString();
+                    string valueType;
+
+                    try
+                    {
+                        valueType = value.GetType().ToString();
+                    }
+                    catch (RuntimeBinderException)
+                    {
+                        continue;
+                    }
 
                     if (valueType == "COMObject")
                     {
