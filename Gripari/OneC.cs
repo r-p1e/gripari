@@ -196,7 +196,7 @@ namespace Hucksters.Forvaret.Input
             return new []{ "Constant", "Enum", "Document", "Catalog" };
         }
 
-        private IEnumerable<string> SourceFullName()
+        private IEnumerable<string> AllSupportedSourcesFullNames()
         {
             foreach (var source in AllSupportedSources())
             {
