@@ -7,7 +7,7 @@
     <ProjectGuid>{DB37F0CB-F445-4ACF-A964-EE1E376F255F}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Gripari</RootNamespace>
+    <RootNamespace>Hucksters.Gripari</RootNamespace>
     <AssemblyName>Gripari</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
