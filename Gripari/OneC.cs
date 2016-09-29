@@ -138,17 +138,7 @@ namespace Hucksters.Forvaret.Input
             EventLog eventlog;
             
             eventlog.level = Connection.String(eventLog.Level);
-            eventlog.port = eventLog.port;
-            eventlog.serverName = eventLog.ServerName;
-            eventlog.session = eventLog.Session;
-            eventlog.transactionId = eventLog.TransactionId;
-            eventlog.transactionStatus = Connection.String(eventLog.TransactionStatus);
             eventlog.user = Connection.String(eventLog.User);
-            eventlog.applicatioName = eventLog.ApplicationName;
-            eventlog.comment = eventLog.Comment;
-            eventlog.computer = eventLog.Computer;
-            eventlog.connection = eventLog.Connection;
-            eventlog.dataPresentation = eventLog.dataPresentation;
             eventlog.date = eventLog.Date;
             eventlog.what = eventLog.Event;
 
@@ -200,13 +190,16 @@ namespace Hucksters.Forvaret.Input
                 yield return OneCEventLogToEventLogStruct(eventLog);
             }
         }
+
+        private static string[] AllSupportedSource()
+        {
+            return new []{ "Constant", "Enum", "Document", "Catalog" };
+        }
     }
 
     public struct EventLog
     {
-        public string level, user, computer, applicatioName, comment, what;
-        public string dataPresentation, transactionStatus, transactionId, serverName;
-        public int session, connection, port;
+        public string level, user, what;
         public DateTime date;
         public Dictionary<string, object> data;
     }
