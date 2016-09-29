@@ -191,9 +191,22 @@ namespace Hucksters.Forvaret.Input
             }
         }
 
-        private static string[] AllSupportedSource()
+        private static string[] AllSupportedSources()
         {
             return new []{ "Constant", "Enum", "Document", "Catalog" };
+        }
+
+        private IEnumerable<string> SourceFullName()
+        {
+            foreach (var source in AllSupportedSources())
+            {
+                dynamic sourceMetadata = ReflectionExt.GetAttr(Connection.Metadata, (source + "s"));
+
+                foreach (var sourceInfo in sourceMetadata)
+                {
+                    yield return (source + "." + sourceInfo.Name);
+                }
+            }
         }
     }
 
