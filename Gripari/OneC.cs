@@ -174,7 +174,7 @@ namespace Hucksters.Forvaret.Input
             return eventlog;
         }
 
-        public IEnumerable<EventLog> Export(DateTime startDate, DateTime endDate)
+        public IEnumerable<EventLog> ExportByEvent(DateTime startDate, DateTime endDate)
         {
 
             dynamic filterEvents = Connection.NewObject("Structure");
@@ -233,6 +233,26 @@ namespace Hucksters.Forvaret.Input
                     }
                 }
                 yield return data;
+            }
+        }
+
+        public IEnumerable<EventLog> Export(DateTime startDate, DateTime endDate)
+        {
+            foreach (var path in AllSupportedSourcesPath())
+            {
+                foreach (var data in ExtractDataRowsFromSource(path))
+                {
+
+                    EventLog eventLog = new EventLog();
+
+                    eventLog.date = DateTime.Now;
+                    eventLog.level = "INFO";
+                    eventLog.user = "Gripari";
+                    eventLog.what = "_$Data$_.Grub";
+                    eventLog.data = data;
+
+                    yield return eventLog;
+                }
             }
         }
     }
