@@ -196,7 +196,7 @@ namespace Hucksters.Forvaret.Input
             return new []{ "Constant", "Enum", "Document", "Catalog" };
         }
 
-        private IEnumerable<string> AllSupportedSourcesFullNames()
+        private IEnumerable<string> AllSupportedSourcesPath()
         {
             foreach (var source in AllSupportedSources())
             {
@@ -206,6 +206,33 @@ namespace Hucksters.Forvaret.Input
                 {
                     yield return (source + "." + sourceInfo.Name);
                 }
+            }
+        }
+
+        private IEnumerable<Dictionary<string, object>> ExtractDataRowsFromSource (string sourcePath)
+        {
+            dynamic query = Connection.NewObject("Query");
+            query.Text = String.Format("SELECT * FROM {0}", sourcePath);
+            dynamic rows = query.Execute().Unload();
+
+            for (int i = 0; i < rows.Count(); i++)
+            {
+                Dictionary<string, object> data = new Dictionary<string, object>();
+                for (int j = 0; j < rows.Columns.Count(); j++)
+                {
+                    string name = rows.Columns.Get(j).Name;
+                    dynamic value = rows.Get(i).Get(j);
+                    string valueType = value.GetType().ToString();
+
+                    if (valueType == "COMObject")
+                    {
+                        data.Add(name, Connection.String(value));
+                    } else
+                    {
+                        data.Add(name, value);
+                    }
+                }
+                yield return data;
             }
         }
     }
