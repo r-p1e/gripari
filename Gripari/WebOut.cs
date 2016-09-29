@@ -23,10 +23,16 @@ namespace Hucksters.Gripari.Output
         public void OnEventLog(object sender, EventLogEventArgs ev)
         {
             var severity = Severity.Info;
-            if (ev.Severity != "Information")
+            if (ev.Severity != "INFO")
                 severity = Severity.Error;
-
-            EventLog eventLog = new EventLog { Severity = severity, Timestamp = ev.Timestamp, Msg = ev.Msg };
+            Console.WriteLine(ev.Msg);
+            EventLog eventLog = new EventLog
+            {
+                Severity = severity,
+                Timestamp = ev.Timestamp,
+                Msg = ev.Msg,
+                Source = sender.GetType().Name
+            };
             Push(eventLog);
         }
 
@@ -46,7 +52,7 @@ namespace Hucksters.Gripari.Output
             var flushMsg = eventLogs.ToByteArray();
         }
 
-        public void Send(byte [] data)
+        public void Send(byte[] data)
         {
 
             request.Method = "PUT";
@@ -62,7 +68,7 @@ namespace Hucksters.Gripari.Output
 
         }
 
-        static string getMd5Hash(byte [] input)
+        static string getMd5Hash(byte[] input)
         {
             MD5CryptoServiceProvider md5Hasher = new MD5CryptoServiceProvider();
             byte[] data = md5Hasher.ComputeHash(input);
