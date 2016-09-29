@@ -258,7 +258,7 @@ namespace Hucksters.Gripari.Input
                     eventLog.date = DateTime.Now;
                     eventLog.level = "INFO";
                     eventLog.user = "Gripari";
-                    eventLog.what = "_$Data$_.Grub";
+                    eventLog.what = path;
                     eventLog.data = data;
 
                     yield return eventLog;
