@@ -11,7 +11,7 @@ using Microsoft.CSharp.RuntimeBinder;
 
 namespace Hucksters.Gripari.Input
 {
-    
+
     public class OneC
     {
         public event EventHandler<EventLogEventArgs> GotEventLog;
@@ -36,7 +36,7 @@ namespace Hucksters.Gripari.Input
                     foreach (var dbase in connectStringPerSectionFromConfig(cfg))
                     {
                         ExportOneC exportOneC = new ExportOneC(dbase.Value);
-                        foreach (var eventLog in exportOneC.Export(currentStartDT, currentEndDT))
+                        foreach (var eventLog in exportOneC.ExportAll(currentStartDT, currentEndDT))
                         {
                             EventLogEventArgs elea = new EventLogEventArgs();
                             elea.Severity = eventLog.level;
@@ -49,7 +49,7 @@ namespace Hucksters.Gripari.Input
                 }
             }
         }
-        
+
         public List<string> findConfigs()
         {
             Console.WriteLine("Looking for 1C config file...");
@@ -66,7 +66,8 @@ namespace Hucksters.Gripari.Input
                 {
                     configs.Add(fi.FullName);
                 }
-            } else
+            }
+            else
             {
                 // TODO: create make sense exception
                 throw new Exception();
@@ -80,7 +81,7 @@ namespace Hucksters.Gripari.Input
             var parser = new FileIniDataParser();
             IniData configs = parser.ReadFile(pathToConfigFile);
             Dictionary<string, string> connectStringPerSection = new Dictionary<string, string>();
-            
+
             foreach (var config in configs.Sections)
             {
                 connectStringPerSection.Add(config.SectionName, configs[config.SectionName]["Connect"]);
@@ -132,12 +133,12 @@ namespace Hucksters.Gripari.Input
                 }
             }
             oneCDataMetaStructure[metadataname] = metaStructureItemNames.ToArray();
-         }
+        }
 
         public EventLog OneCEventLogToEventLogStruct(dynamic eventLog)
         {
             EventLog eventlog;
-            
+
             eventlog.level = Connection.String(eventLog.Level);
             eventlog.user = Connection.String(eventLog.User);
             eventlog.date = eventLog.Date;
@@ -175,7 +176,7 @@ namespace Hucksters.Gripari.Input
             return eventlog;
         }
 
-        public IEnumerable<EventLog> ExportByEvent(DateTime startDate, DateTime endDate)
+        public IEnumerable<EventLog> ExportChanged(DateTime startDate, DateTime endDate)
         {
 
             dynamic filterEvents = Connection.NewObject("Structure");
@@ -194,7 +195,7 @@ namespace Hucksters.Gripari.Input
 
         private static string[] AllSupportedSources()
         {
-            return new []{ "Constant", "Enum", "Document", "Catalog" };
+            return new[] { "DocumentJournal", "Constant", "Enum", "Document", "Catalog" };
         }
 
         private IEnumerable<string> AllSupportedSourcesPath()
@@ -210,10 +211,11 @@ namespace Hucksters.Gripari.Input
             }
         }
 
-        private IEnumerable<Dictionary<string, object>> ExtractDataRowsFromSource (string sourcePath)
+        private IEnumerable<Dictionary<string, object>> ExtractDataRowsFromSource(string sourcePath)
         {
             dynamic query = Connection.NewObject("Query");
             query.Text = String.Format("SELECT * FROM {0}", sourcePath);
+            Console.WriteLine(query.Text);
             dynamic rows = query.Execute().Unload();
 
             for (int i = 0; i < rows.Count(); i++)
@@ -237,7 +239,8 @@ namespace Hucksters.Gripari.Input
                     if (valueType == "System.__ComObject")
                     {
                         data.Add(name, Connection.String(value));
-                    } else
+                    }
+                    else
                     {
                         data.Add(name, value);
                     }
@@ -246,10 +249,14 @@ namespace Hucksters.Gripari.Input
             }
         }
 
-        public IEnumerable<EventLog> Export(DateTime startDate, DateTime endDate)
+        public IEnumerable<EventLog> ExportAll(DateTime startDate, DateTime endDate)
         {
+            dynamic metadataObjects = Connection.NewObject("Array");
+
             foreach (var path in AllSupportedSourcesPath())
             {
+                metadataObjects.Add(path);
+
                 foreach (var data in ExtractDataRowsFromSource(path))
                 {
 
@@ -285,7 +292,7 @@ namespace Hucksters.Gripari.Input
      Class for emulate python's __getattr__ behaviour
      took from here: https://stackoverflow.com/questions/138045/is-there-something-like-pythons-getattr-in-c
      */
-     public static class ReflectionExt
+    public static class ReflectionExt
     {
         public static dynamic GetAttr(this object obj, string name)
         {
@@ -298,9 +305,9 @@ namespace Hucksters.Gripari.Input
     /*
      Class utils. Here we collect some usefull methods
      */
-     public static class Utils
+    public static class Utils
     {
-        public static double DateTimeToUnixTImestamp (DateTime dt)
+        public static double DateTimeToUnixTImestamp(DateTime dt)
         {
             return (dt.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds;
         }
