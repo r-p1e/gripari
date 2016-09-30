@@ -13,11 +13,9 @@ namespace Hucksters.Gripari
     {
         static void Main(string[] args)
         {
-            int number = 1;
-            Console.WriteLine(number);
 
             var input1c = new OneC();
-            var outputWeb = new WebOut();
+            var outputWeb = new FileOut();
 
             input1c.GotEventLog += outputWeb.OnEventLog;
 

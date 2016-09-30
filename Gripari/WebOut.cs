@@ -12,20 +12,19 @@ using System.Security.Cryptography;
 
 namespace Hucksters.Gripari.Output
 {
-    class WebOut
+    abstract class BaseOutput
     {
         static readonly int entitiesLength = 128;
-        EventLogs eventLogs = new EventLogs();
+        public EventLogs eventLogs = new EventLogs();
         int entitiesIndex = 0;
         DateTime lastFlushTime = DateTime.Now;
-        WebRequest request = WebRequest.Create("https://repo.hucksters.com/");
 
         public void OnEventLog(object sender, EventLogEventArgs ev)
         {
             var severity = Severity.Info;
             if (ev.Severity != "INFO")
                 severity = Severity.Error;
-            Console.WriteLine(ev.Msg);
+
             EventLog eventLog = new EventLog
             {
                 Severity = severity,
@@ -36,21 +35,43 @@ namespace Hucksters.Gripari.Output
             Push(eventLog);
         }
 
-        public void Push(EventLog ev)
+        protected void Push(EventLog ev)
         {
             if (entitiesIndex++ == entitiesLength || ((DateTime.Now - lastFlushTime).Seconds > 60))
             {
                 Flush();
+
+                eventLogs = new EventLogs();
                 entitiesIndex = 0;
                 lastFlushTime = DateTime.Now;
             }
             eventLogs.Entities.Add(ev);
         }
 
-        public void Flush()
+        public abstract void Flush();
+    }
+
+    class FileOut : BaseOutput
+    {
+        const string filename = "gripari.log";
+
+        public override void Flush()
+        {
+            using (BinaryWriter writer = new BinaryWriter(File.Open(filename, FileMode.Append)))
+            {
+                writer.Write(eventLogs.ToByteArray());
+            }
+        }
+
+    }
+
+    class WebOut : BaseOutput
+    {
+        WebRequest request = WebRequest.Create("https://negotians.hucksters.com/");
+
+        public override void Flush()
         {
             var flushMsg = eventLogs.ToByteArray();
-            eventLogs = new EventLogs();
         }
 
         public void Send(byte[] data)
