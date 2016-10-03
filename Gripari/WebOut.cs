@@ -53,13 +53,13 @@ namespace Hucksters.Gripari.Output
 
     class FileOut : BaseOutput
     {
-        const string filename = "gripari.log";
+        const string filename = "gripari_{0}.dat";
 
         public override void Flush()
         {
-            using (BinaryWriter writer = new BinaryWriter(File.Open(filename, FileMode.Append)))
+            using (var writer = File.Create(String.Format(filename, Utils.DateTimeToUnixTImestamp(DateTime.Now))))
             {
-                writer.Write(eventLogs.ToByteArray());
+                eventLogs.WriteTo(writer);
             }
         }
 
