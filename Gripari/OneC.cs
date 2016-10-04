@@ -235,7 +235,56 @@ namespace Hucksters.Gripari.Input
 
                     if (valueType == "System.__ComObject")
                     {
-                        data.Add(name, Connection.String(value));
+
+                        string link;
+                        try
+                        {
+                            link = Connection.XMLTypeOf(value).TypeName;
+                        }
+                        catch (Exception)
+                        {
+                            data.Add(name, Connection.String(name));
+                            continue;
+                        }
+
+                        string[] partOfTableName;
+
+                        try
+                        {
+                            partOfTableName = Utils.ExtractFromTypeNameTableName(link);
+                        }
+                        catch (Exception)
+                        {
+                            data.Add(name, Connection.String(value));
+                            continue;
+                        }
+                        dynamic subquery = Connection.NewObject("Query");
+                        subquery.Text = String.Format("SELECT * FROM {0}.{1} as lines WHERE lines.Ref=&Ref",
+                                                       partOfTableName[0],
+                                                       partOfTableName[1]);
+                        subquery.SetParameter("Ref", value);
+                        dynamic subrows;
+
+                        try
+                        {
+                            subrows = subquery.Execute().Unload();
+                        }
+                        catch (Exception)
+                        {
+                            data.Add(name, Connection.String(value));
+                            continue;
+                        }
+
+                        var subdata = new Dictionary<string, object>();
+
+                        for (int subrowRow = 0; subrowRow < subrows.Count(); subrowRow++)
+                        {
+                            for (int subrowColumn = 0; subrowColumn < subrows.Columns.Count(); subrowColumn++)
+                            {
+                                subdata.Add(subrows.Columns.Get(subrowColumn).Name, subrows.Get(subrowRow).Get(subrowColumn));
+                            }
+                        }
+                        data.Add(name, subdata);
                     }
                     else
                     {
@@ -307,6 +356,24 @@ namespace Hucksters.Gripari.Input
         public static double DateTimeToUnixTImestamp(DateTime dt)
         {
             return (dt.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds;
+        }
+
+        public static string[] ExtractFromTypeNameTableName(string typeName)
+        {
+            string[] splited = typeName.Split('.');
+
+            if (splited.Length < 2)
+            {
+                throw new Exception();
+            }
+
+            string ValueType = splited[0];
+
+            if (ValueType.EndsWith("Ref"))
+            {
+                ValueType = ValueType.Substring(0, ValueType.Length - 3);
+            }
+            return new string[2] { ValueType, splited[1] };
         }
     }
 }
