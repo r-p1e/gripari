@@ -193,7 +193,7 @@ namespace Hucksters.Gripari.Input
 
         private static string[] AllSupportedSources()
         {
-            return new[] { "DocumentJournal", "Constant", "Enum", "Document", "Catalog" };
+            return new[] { "Constant", "Document", "Catalog", "DocumentJournal", "Enum" };
         }
 
         private IEnumerable<string> AllSupportedSourcesPath()
@@ -207,6 +207,82 @@ namespace Hucksters.Gripari.Input
                     yield return (source + "." + sourceInfo.Name);
                 }
             }
+        }
+
+        private Dictionary<string, object> ExtractDataRowByRefFromSource(string sourcePath, dynamic refValue, int depth)
+        {
+            dynamic subquery = Connection.NewObject("Query");
+            subquery.Text = String.Format("SELECT * FROM {0} as lines WHERE lines.Ref=&Ref",
+                                           sourcePath);
+            subquery.SetParameter("Ref", refValue);
+            dynamic subrows;
+
+            subrows = subquery.Execute().Unload();
+
+            var data = new Dictionary<string, object>();
+
+            for (int subrowRow = 0; subrowRow < subrows.Count(); subrowRow++)
+            {
+                for (int subrowColumn = 0; subrowColumn < subrows.Columns.Count(); subrowColumn++)
+                {
+                    string name = subrows.Columns.Get(subrowColumn).Name;
+                    dynamic value = subrows.Get(subrowRow).Get(subrowColumn);
+                    string valueType;
+
+                    try
+                    {
+                        valueType = value.GetType().ToString();
+                    }
+                    catch (RuntimeBinderException)
+                    {
+                        continue;
+                    }
+
+                    if (valueType == "System.__ComObject" && Connection.String(refValue) != Connection.String(value))
+                    {
+
+                        string link;
+                        try
+                        {
+                            link = Connection.XMLTypeOf(value).TypeName;
+                        }
+                        catch (Exception)
+                        {
+                            data.Add(name, Connection.String(name));
+                            continue;
+                        }
+
+                        string[] partOfTableName;
+
+                        try
+                        {
+                            partOfTableName = Utils.ExtractFromTypeNameTableName(link);
+                        }
+                        catch (Exception)
+                        {
+                            data.Add(name, Connection.String(value));
+                            continue;
+                        }
+
+                        if (depth < 3)
+                        {
+                            var subdata = ExtractDataRowByRefFromSource(String.Join(".", partOfTableName), value, depth + 1);
+                            data.Add(name, subdata);
+
+                        }
+                        else
+                        {
+                            data.Add(name, value);
+                        }
+                    }
+                    else
+                    {
+                        data.Add(name, value);
+                    }
+                }
+            }
+            subrows.Clear();
+            return data;
         }
 
         private IEnumerable<Dictionary<string, object>> ExtractDataRowsFromSource(string sourcePath)
@@ -258,32 +334,8 @@ namespace Hucksters.Gripari.Input
                             data.Add(name, Connection.String(value));
                             continue;
                         }
-                        dynamic subquery = Connection.NewObject("Query");
-                        subquery.Text = String.Format("SELECT * FROM {0}.{1} as lines WHERE lines.Ref=&Ref",
-                                                       partOfTableName[0],
-                                                       partOfTableName[1]);
-                        subquery.SetParameter("Ref", value);
-                        dynamic subrows;
 
-                        try
-                        {
-                            subrows = subquery.Execute().Unload();
-                        }
-                        catch (Exception)
-                        {
-                            data.Add(name, Connection.String(value));
-                            continue;
-                        }
-
-                        var subdata = new Dictionary<string, object>();
-
-                        for (int subrowRow = 0; subrowRow < subrows.Count(); subrowRow++)
-                        {
-                            for (int subrowColumn = 0; subrowColumn < subrows.Columns.Count(); subrowColumn++)
-                            {
-                                subdata.Add(subrows.Columns.Get(subrowColumn).Name, subrows.Get(subrowRow).Get(subrowColumn));
-                            }
-                        }
+                        var subdata = ExtractDataRowByRefFromSource(String.Join(".", partOfTableName), value, 1);
                         data.Add(name, subdata);
                     }
                     else
@@ -293,6 +345,7 @@ namespace Hucksters.Gripari.Input
                 }
                 yield return data;
             }
+            rows.Clear();
         }
 
         public IEnumerable<EventLog> ExportAll(DateTime startDate, DateTime endDate)
